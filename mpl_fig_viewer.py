@@ -139,7 +139,7 @@ class FigureViewer(QMainWindow):
 
 
 if __name__ == "__main__":
-    app_id = "com.forefront.mplfigureviewer"
+    app_id = "com.hp.mplfigureviewer"
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(app_id)
     app = QApplication(sys.argv)
     palette = set_light_palette(window_bg="#E2E2E2")
