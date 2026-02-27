@@ -1,6 +1,5 @@
 from pathlib import Path
 import cx_Freeze
-import shutil
 
 HERE = Path(__file__).parent
 
@@ -21,11 +20,11 @@ cx_Freeze.setup(
         "build_exe": {
             "zip_exclude_packages": ["numpy", "matplotlib", "PySide6", "shiboken6"], # Keep these out of library.zip
             "zip_include_packages": ["encodings"], # Keep zip small
-            "include_msvcr": True, # Maybe needed for Windows
+            "include_msvcr": False, # Maybe needed for Windows
             "include_files": [
                 # Copy assets folder to build folder
-                (str(assets_path / "blank.pkl"), "blank.pkl"),
-                (str(assets_path / "plot_icon.ico"), "plot_icon.ico"),
+                (str(assets_path / "blank.pkl"), "assets/blank.pkl"),
+                (str(assets_path / "plot_icon.ico"), "assets/plot_icon.ico"),
             ],
         }
     }

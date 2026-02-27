@@ -53,7 +53,7 @@ class FigureViewer(QMainWindow):
 
         # Load blank figure if opened app directly, otherwise open clicked file
         # This also adds self.canv_frame and self.toolbar to the main layout
-        file = BASE / "blank.pkl"
+        file = BASE / "assets" / "blank.pkl"
         if len(sys.argv) > 1:
             file = sys.argv[1]
         self._loadFigureFromFile(event=None, file=file)  
