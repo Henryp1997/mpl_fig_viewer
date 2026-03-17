@@ -54,14 +54,15 @@ class FigureViewer(QMainWindow):
         # Load blank figure if opened app directly, otherwise open clicked file
         # This also adds self.canv_frame and self.toolbar to the main layout
         file = BASE / "assets" / "blank.pkl"
+        self.blank_file = file
         if len(sys.argv) > 1:
             file = sys.argv[1]
-        self._loadFigureFromFile(event=None, file=file)  
+        self._loadFigureFromFile(None, file=file)  
 
         self.setCentralWidget(main_widget)
 
     
-    def _loadFigureFromFile(self, event, file=None):
+    def _loadFigureFromFile(self, _, file=None):
         if file is None:
             file = QFileDialog.getOpenFileName(
                 self, "Select .pkl or .pickle file", dir=r"C:\\", filter="Python figure (*.pkl *.pickle)"
@@ -109,6 +110,10 @@ class FigureViewer(QMainWindow):
 
         # Redraw canvas
         self.canvas.draw_idle()
+
+        # Set window title to filename
+        if file != self.blank_file:
+            self.setWindowTitle(file)
 
 
     def _createToolbar(self):
