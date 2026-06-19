@@ -1,7 +1,7 @@
 """
 mpl_fig_viewer.py
 
-Mini app for viewing .pkl or .pickle interactive matplotlib figure files
+Mini app for viewing .eplot interactive matplotlib figure files
 
     - Author: HP, 2026
 """
@@ -41,7 +41,7 @@ class FigureViewer(QMainWindow):
 
         # Create browse for files button
         self.browse_btn = CustomButton(
-            "Browse for .pkl or .pickle file...", self.fsizes[15], self.fsizes[6], "black", 1, "#666666", 3, "#C7C6FB", "black", "white"
+            "Browse for .eplot file...", self.fsizes[15], self.fsizes[6], "black", 1, "#666666", 3, "#C7C6FB", "black", "white"
         )
         self.browse_btn.clicked.connect(self._loadFigureFromFile)
         self.browse_btn.setFocusPolicy(Qt.FocusPolicy.NoFocus)
@@ -53,19 +53,23 @@ class FigureViewer(QMainWindow):
 
         # Load blank figure if opened app directly, otherwise open clicked file
         # This also adds self.canv_frame and self.toolbar to the main layout
-        file = BASE / "assets" / "blank.pkl"
+        file = BASE / "assets" / "blank.eplot"
         self.blank_file = file
         if len(sys.argv) > 1:
             file = sys.argv[1]
-        self._loadFigureFromFile(None, file=file)  
+        self._loadFigureFromFile(None, file=file)
 
         self.setCentralWidget(main_widget)
 
     
     def _loadFigureFromFile(self, _, file=None):
+        """
+        Load pickled file of format .eplot or .pkl (legacy).
+        TODO: move towards .eplot created via JSON instead of pickling
+        """
         if file is None:
             file = QFileDialog.getOpenFileName(
-                self, "Select .pkl or .pickle file", dir=r"C:\\", filter="Python figure (*.pkl *.pickle)"
+                self, "Select .eplot or .pickle file", dir=r"C:\\", filter="Python figure (*.eplot *.pkl)"
             )[0]
             if not file or not Path(file).exists():
                 return
