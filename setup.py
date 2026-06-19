@@ -7,7 +7,7 @@ assets_path = HERE / "assets"
 executables = [
     cx_Freeze.Executable(
         str(HERE / "mpl_fig_viewer.py"),
-        base="Win32GUI",
+        base="gui",
         target_name="pyFigViewer.exe",
         icon=str(assets_path / "plot_icon.ico")
     )
@@ -23,7 +23,7 @@ cx_Freeze.setup(
             "include_msvcr": False, # Maybe needed for Windows
             "include_files": [
                 # Copy assets folder to build folder
-                (str(assets_path / "blank.pkl"), "assets/blank.pkl"),
+                (str(assets_path / "blank.eplot"), "assets/blank.eplot"),
                 (str(assets_path / "plot_icon.ico"), "assets/plot_icon.ico"),
             ],
         }
