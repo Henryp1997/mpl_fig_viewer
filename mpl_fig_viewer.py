@@ -5,10 +5,20 @@ Mini app for viewing .eplot interactive matplotlib figure files
 
     - Author: HP, 2026
 """
+import os
 import sys
 import ctypes
 import pickle
 from pathlib import Path
+
+if getattr(sys, "frozen", False):
+    os.environ["MATPLOTLIBDATA"] = os.path.join(
+        os.path.dirname(sys.executable),
+        "mpl-data",
+    )
+
+import matplotlib
+matplotlib.use("QtAgg")
 import matplotlib.text as mtext
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
@@ -78,12 +88,8 @@ class FigureViewer(QMainWindow):
         with open(file, "rb") as f:
             fig = pickle.load(f)
     
-        try:
-            print(fig.get_axes())
-        except AttributeError:
-            # Fig saved with old matplotlib version and has missing attrs
-            # Patch axes internals
-            fig = self._patchFig(fig)
+        # Fig may be saved with old matplotlib version and has missing attrs
+        fig = self._patchFig(fig)
 
         # Remove old canvas widget
         if hasattr(self, "canvas"):
