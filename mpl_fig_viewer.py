@@ -9,6 +9,7 @@ import sys
 import ctypes
 import pickle
 from pathlib import Path
+import matplotlib.text as mtext
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
 from PySide6.QtWidgets import (
@@ -76,7 +77,14 @@ class FigureViewer(QMainWindow):
 
         with open(file, "rb") as f:
             fig = pickle.load(f)
-        
+    
+        try:
+            print(fig.get_axes())
+        except AttributeError:
+            # Fig saved with old matplotlib version and has missing attrs
+            # Patch axes internals
+            fig = self._patchFig(fig)
+
         # Remove old canvas widget
         if hasattr(self, "canvas"):
             old_canv = self.canvas
@@ -145,6 +153,36 @@ class FigureViewer(QMainWindow):
         width_px = fig_size[0] * fig_dpi
         height_px = fig_size[1] * fig_dpi
         return width_px, height_px
+
+
+    def _patchFig(self, fig):
+        """ Patch a figure saved in an older matplotlib version """
+        for ax in fig._axstack.as_list():
+            if not hasattr(ax, "_axis_names"):
+                ax._axis_names = ("x", "y")
+
+            if not hasattr(ax, "_axis_map"):
+                ax._axis_map = {
+                    "x": ax.xaxis,
+                    "y": ax.yaxis,
+                }
+
+        # Patch all Text objects
+        for obj in fig.findobj():
+            if isinstance(obj, mtext.Text):
+                if not hasattr(obj, "_features"):
+                    obj._features = None
+                
+                if not hasattr(obj, "_language"):
+                    obj._language = None
+
+                fp = obj.get_fontproperties()
+                for k, v in list(fp.__dict__.items()):
+                    if isinstance(v, list):
+                        setattr(fp, k, tuple(v))
+                obj.set_fontproperties(fp)
+        
+        return fig
 
 
 if __name__ == "__main__":
