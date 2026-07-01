@@ -35,6 +35,10 @@ else:
 from custom_button import CustomButton
 from palette import set_light_palette
 
+# Old NumPy version patch
+import numpy._core.multiarray as multiarray
+sys.modules["numpy.core.multiarray"] = multiarray
+
 
 class FigureViewer(QMainWindow):
     def __init__(self):
